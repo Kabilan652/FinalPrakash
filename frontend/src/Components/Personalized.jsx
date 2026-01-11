@@ -1,0 +1,224 @@
+import { useEffect, useState, useContext } from "react";
+import { Link } from "react-router-dom";
+import { ContextProvider } from "../Context/Context";
+import toast from "react-hot-toast"; 
+
+const Personalized = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const { addToCart, addToWishlist } = useContext(ContextProvider);
+
+  useEffect(() => {
+    const fetchRandomProducts = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/products/random/");
+        if (!res.ok) throw new Error("Failed to fetch products");
+
+        const result = await res.json();
+        setData(result);
+      } catch (error) {
+        console.error("Error fetching random products:", error);
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRandomProducts();
+  }, []);
+
+  //  HELPER: Convert relative path to full URL
+  const toFullImageUrl = (img) => {
+    if (!img) return null;
+    if (img.startsWith("http")) return img;
+    const cleanPath = img.startsWith("/") ? img : `/${img}`;
+    return `http://localhost:8000${cleanPath}`;
+  };
+
+  //  HELPER: Get the first available image
+  const getProductImage = (product) => {
+    const rawImage = product.image_1 || product.image_2 || product.image_3;
+    return toFullImageUrl(rawImage);
+  };
+
+  // Handler for Wishlist
+  const handleAddToWishlist = (e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const itemToAdd = {
+      ...product,
+      image: getProductImage(product),
+    };
+
+    // 1. Capture the return value (true/false)
+    const isAdded = addToWishlist(itemToAdd);
+
+    // 2. Show the correct message based on the result
+    if (isAdded) {
+      toast.success("Added to Wishlist ❤️");
+    } else {
+      toast.error("Item already in Wishlist!", { icon: "✅" });
+    }
+  };
+  // Handler for Cart
+  const handleAddToCart = (e, product) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const itemToAdd = {
+    ...product,
+    image: getProductImage(product),
+  };
+
+  // 1. Check if it was actually added
+  const isAdded = addToCart(itemToAdd);
+
+  // 2. Show the correct Toast
+  if (isAdded) {
+    toast.success("Added to Cart 🛒");
+  } else {
+    toast("Item already in Cart", { icon: "✅" });
+  }
+};
+
+  if (loading || !data.length) return null;
+
+  return (
+    <>
+      {/* 2. Add the Toaster component here so the notifications have a place to show up */}
+
+      <style>
+        {`
+          .no-scrollbar::-webkit-scrollbar { display: none; }
+          .no-scrollbar {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+        `}
+      </style>
+
+      <div className="container mx-auto my-10 px-4">
+        {/* HEADER */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold tracking-tight text-white">
+            Recommendations for You
+          </h2>
+        </div>
+
+        {/* HORIZONTAL SCROLL */}
+        <div className="flex gap-3 sm:gap-6 overflow-x-auto no-scrollbar pb-4">
+          {data.map((product) => {
+            const {
+              id,
+              name,
+              price,
+              rating = 0,
+              description,
+            } = product;
+
+            const displayImage = getProductImage(product);
+
+            return (
+              <div key={id} className="relative group shrink-0 snap-start">
+                <Link to={`/product/${id}`}>
+                  <div className="relative w-[165px] sm:w-64 bg-[#121212] border border-white/5 rounded-xl sm:rounded-2xl p-2 sm:p-4 hover:bg-white/10 transition-all flex flex-col min-h-[280px] sm:min-h-[400px]">
+                    
+                    <div className="absolute top-3 right-3 z-20 flex flex-col gap-2">
+                      
+                      {/* Wishlist Button */}
+                      <button
+                        onClick={(e) => handleAddToWishlist(e, product)}
+                        className="p-2 bg-zinc-800/80 backdrop-blur-md hover:bg-white hover:text-red-500 text-white rounded-full shadow-lg transition-all transform hover:scale-110 border border-white/10"
+                        title="Add to Wishlist"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                      </button>
+
+                      {/* Cart Button */}
+                      <button
+                        onClick={(e) => handleAddToCart(e, product)}
+                        className="p-2 bg-zinc-800/80 backdrop-blur-md hover:bg-white hover:text-emerald-600 text-white rounded-full shadow-lg transition-all transform hover:scale-110 border border-white/10"
+                        title="Add to Cart"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* IMAGE */}
+                    <div className="h-32 sm:h-52 flex items-center justify-center mb-2 sm:mb-4">
+                      {displayImage ? (
+                        <img
+                          src={displayImage}
+                          alt={name}
+                          className="max-h-full object-contain transition-transform group-hover:scale-105"
+                          onError={(e) => e.target.src = "https://via.placeholder.com/150"}
+                        />
+                      ) : (
+                         <div className="text-zinc-500 text-xs">No Image</div>
+                      )}
+                    </div>
+
+                    {/* DETAILS */}
+                    <div className="flex flex-col gap-1 sm:gap-2">
+                      <h1 className="text-[12px] sm:text-[15px] font-medium line-clamp-2 text-white/90">
+                        {name}
+                      </h1>
+
+                      {/* PRICE */}
+                      <span className="text-sm sm:text-xl font-bold text-white">
+                        ₹{Number(price).toLocaleString("en-IN")}
+                      </span>
+
+                      {/* RATING */}
+                      <div className="flex items-center gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <svg
+                            key={i}
+                            className={`w-3 h-3 sm:w-4 sm:h-4 ${
+                              i < Math.floor(rating)
+                                ? "text-green-500 fill-green-500"
+                                : "text-gray-600 fill-gray-600"
+                            }`}
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+
+                      {/* DESCRIPTION */}
+                      {description && (
+                        <ul className="flex flex-col gap-1 mt-2">
+                          {description
+                            .split("\n")
+                            .slice(0, 3)
+                            .map((line, index) => (
+                              <li
+                                key={index}
+                                className="text-[11px] text-zinc-400 flex items-start gap-2"
+                              >
+                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-1"></span>
+                                {line}
+                              </li>
+                            ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Personalized;
