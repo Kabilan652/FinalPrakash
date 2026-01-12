@@ -23,7 +23,6 @@ import Wishlist from "../pages/Wishlist";
 import Cart from "../pages/Cart";
 
 import Payment from "../Components/Payment";
-import UpiPay from "../Components/UpiPay";
 import Success from "../pages/Success";
 import PaymentFailed from "../pages/PaymentFailed";
 
@@ -92,7 +91,6 @@ const AllRoutes = () => {
 
       {/* PAYMENT FLOW */}
       <Route path="/payment" element={<Payment />} />
-      <Route path="/upi-pay" element={<UpiPay />} />
       <Route path="/success" element={<Success />} />
 
       {/* ADMIN */}

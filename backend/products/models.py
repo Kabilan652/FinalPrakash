@@ -6,9 +6,21 @@ class Product(models.Model):
     category = models.CharField(max_length=100)
     brand = models.CharField(max_length=100, blank=True)
 
+    # ✅ NEW FIELD (MRP / Original Price)
+    original_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+
+    # Selling Price
     price = models.DecimalField(max_digits=10, decimal_places=2)
+
     discount_price = models.DecimalField(
-        max_digits=10, decimal_places=2, blank=True, null=True
+        max_digits=10, decimal_places=2,
+        blank=True,
+        null=True
     )
 
     stock = models.IntegerField()
@@ -20,7 +32,6 @@ class Product(models.Model):
 
     created_at = models.DateField(auto_now_add=True)
 
-    # ✅ MULTIPLE IMAGES
     image_1 = models.ImageField(upload_to="products/", blank=True, null=True)
     image_2 = models.ImageField(upload_to="products/", blank=True, null=True)
     image_3 = models.ImageField(upload_to="products/", blank=True, null=True)

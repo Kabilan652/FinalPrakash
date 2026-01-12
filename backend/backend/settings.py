@@ -148,3 +148,6 @@ from pathlib import Path
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+RAZORPAY_KEY_ID = "rzp_test_S2wmzfpOPnBhVh"
+RAZORPAY_KEY_SECRET = "xKMNrj7BrGcndEl5akxxl920"

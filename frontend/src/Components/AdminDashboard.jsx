@@ -295,12 +295,24 @@ export default function AdminDashboard() {
   // --- 3. UI STATES ---
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "", description: "", category: "", brand: "",
-    price: "", discount_price: "", stock: "", rating: 0, reviews_count: 0,
-    image_url: "", is_active: true, is_best_product: false,
-    created_at: new Date().toISOString().split('T')[0]
-  });
+const [formData, setFormData] = useState({
+  name: "",
+  description: "",
+  category: "",
+  brand: "",
+
+  original_price: "",   // ADD THIS
+  price: "",
+  discount_price: "",
+
+  stock: "",
+  rating: 0,
+  reviews_count: 0,
+
+  is_active: true,
+  is_best_product: false,
+  created_at: new Date().toISOString().split('T')[0]
+});
 
   // --- 4. ANALYTICS DATA (Mock) ---
   const salesData = [
@@ -659,7 +671,19 @@ export default function AdminDashboard() {
                             <td className="px-6 py-5">
                               <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-lg uppercase tracking-wider">{p.category}</span>
                             </td>
-                            <td className="px-6 py-5 font-bold text-slate-800">₹{p.price}</td>
+                           <td className="px-6 py-5">
+  <div className="flex flex-col">
+    {p.original_price && (
+      <span className="text-xs text-slate-400 line-through font-bold">
+        ₹{p.original_price}
+      </span>
+    )}
+    <span className="text-sm font-black text-slate-900">
+      ₹{p.price}
+    </span>
+  </div>
+</td>
+
                             <td className="px-6 py-5">
                               <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase ${isReady ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
                                 <span className={`h-1.5 w-1.5 rounded-full ${isReady ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
@@ -722,6 +746,20 @@ export default function AdminDashboard() {
                 <textarea rows="2" className="w-full rounded-xl bg-slate-100 border-none p-3 text-sm font-bold" 
                   value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
               </div>
+              <div className="space-y-1">
+  <label className="text-[10px] font-black uppercase text-slate-400 ml-1">
+    Original Price (MRP ₹)
+  </label>
+  <input
+    type="number"
+    className="w-full rounded-xl bg-slate-100 border-none p-3 text-sm font-bold"
+    value={formData.original_price}
+    onChange={(e) =>
+      setFormData({ ...formData, original_price: e.target.value })
+    }
+  />
+</div>
+
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-1">

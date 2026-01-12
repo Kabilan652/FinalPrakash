@@ -79,6 +79,22 @@ const Home = () => {
               width={250}
             />
           </div>
+          <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <img
+              src="../src/assets/images/banner3.jpeg"
+              alt="offer"
+              width={250}
+            />
+          </div>
+          <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <img
+              src="../src/assets/images/banner4.jpeg"
+              alt="offer"
+              width={250}
+            />
+          </div>
+         
+
 
         </div>
       </div>
