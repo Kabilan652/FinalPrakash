@@ -18,18 +18,23 @@ const Slider = () => {
 		}
 	}
 	return (
-		<div className="relative overflow-hidden z-10">
+		<div className="relative overflow-hidden z-1">
 			<Carousel
 				responsive={responsive}
 				showDots={true}
 				infinite={true}
+				arrows={false}
 				autoPlay={true}
+				swipeable={true}
+				draggable={true}
 				autoPlaySpeed={3000}
 			>
 		
-				<div><img src="../src/assets/images/slider1.png" alt="slider1"  /></div>
-				<div><img src="../src/assets/images/slider2.png" alt="slider2" /></div>
-				<div><img src="../src/assets/images/slider3.png" alt="slider3" /></div>
+				<div><img src="../src/assets/images/slider0.jpeg" alt="slider0"  /></div>
+				<div><img src="../src/assets/images/slider1.jpeg" alt="slider1"  /></div>
+				<div><img src="../src/assets/images/slider2.jpeg" alt="slider2" /></div>
+				<div><img src="../src/assets/images/slider3.jpeg" alt="slider3" /></div>
+				<div><img src="../src/assets/images/slider4.png" alt="slider4" /></div>
  			</Carousel>
 		</div>
 	)

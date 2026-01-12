@@ -65,19 +65,21 @@ const Home = () => {
         <br />
 
         <div className="flex gap-4 flex-wrap justify-center">
+           <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <img
+              src="../src/assets/images/banner1.jpeg"
+              alt="offer"
+              width={250}
+            />
+          </div>
           <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer">
             <img
-              src="https://th.bing.com/th/id/OIP.Ajocvt9k2u7e_AAqcQP31gHaEH?w=279&h=180&c=7&r=0&o=7&pid=1.7"
+              src="../src/assets/images/banner2.jpeg"
               alt="offer"
+              width={250}
             />
           </div>
 
-          <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <img
-              src="https://th.bing.com/th/id/OIP.UxyN3LjjV1QXLpZTN9OIfgHaHa?w=169&h=180&c=7&r=0&o=7&pid=1.7"
-              alt="offer"
-            />
-          </div>
         </div>
       </div>
     </div>
