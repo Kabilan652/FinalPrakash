@@ -1,31 +1,76 @@
 import random
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.contrib.auth import authenticate
+
+# Rest Framework Imports
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import status, generics, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.conf import settings
-from .models import OTP, UserProfile
-from .serializers import UserProfileSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import UserAddress
-from .serializers import UserAddressSerializer
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
+# Local Imports
+from .models import OTP, UserProfile, UserAddress, Product
+from .serializers import (
+    UserProfileSerializer, 
+    UserAddressSerializer, 
+    ProductSerializer, 
+    AdminUserListSerializer
+)
 
-from rest_framework import viewsets
-from .models import Product
-from .serializers import ProductSerializer
+# ---------------------------------------------------------
+#  CONTACT SUPPORT VIEW (NEW ADDITION)
+# ---------------------------------------------------------
+class ContactSupportView(APIView):
+    permission_classes = [AllowAny]
 
-from rest_framework import generics
-from rest_framework.permissions import AllowAny
+    def post(self, request):
+        data = request.data
+        name = data.get('name')
+        user_email = data.get('email')
+        message = data.get('message')
 
-from .serializers import AdminUserListSerializer # <--- Import the new serializer
+        # Validation
+        if not name or not user_email or not message:
+            return Response({'success': False, 'message': 'All fields are required'}, status=400)
+
+        try:
+            # 1. Send Email to OWNER (You)
+            owner_subject = f"New Inquiry from {name}"
+            owner_message = f"Name: {name}\nEmail: {user_email}\n\nMessage:\n{message}"
+            
+            send_mail(
+                subject=owner_subject,
+                message=owner_message,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[settings.EMAIL_HOST_USER], 
+                fail_silently=False,
+            )
+
+            # 2. Send Acknowledgement Email to USER
+            user_subject = "We received your message - Prakash Traders"
+            user_message = f"Dear {name},\n\nThank you for contacting Prakash Traders. We have received your inquiry regarding:\n'{message}'\n\nOur team will get back to you shortly.\n\nBest Regards,\nPrakash Traders Team"
+
+            send_mail(
+                subject=user_subject,
+                message=user_message,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user_email], 
+                fail_silently=False,
+            )
+
+            return Response({'success': True, 'message': 'Message sent successfully!'})
+
+        except Exception as e:
+            print(f"Contact API Error: {str(e)}")
+            return Response({'success': False, 'message': 'Something went wrong. Please try again.'}, status=500)
+
+# ---------------------------------------------------------
+#  EXISTING VIEWS
+# ---------------------------------------------------------
 
 class UserAddressView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -44,9 +89,12 @@ class UserAddressView(APIView):
         return Response(serializer.errors, status=400)
 
     def delete(self, request, pk):
-        address = UserAddress.objects.get(id=pk, user=request.user)
-        address.delete()
-        return Response({"success": True})
+        try:
+            address = UserAddress.objects.get(id=pk, user=request.user)
+            address.delete()
+            return Response({"success": True})
+        except UserAddress.DoesNotExist:
+            return Response({"success": False, "message": "Address not found"}, status=404)
 
 class UserProfileView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -82,8 +130,8 @@ class SendOTP(APIView):
         OTP.objects.create(email=email, otp=otp)
 
         send_mail(
-    subject="Your Login OTP - Prakash Traders",
-    message=f"""
+            subject="Your Login OTP - Prakash Traders",
+            message=f"""
 Welcome to Prakash Traders! 🎉
 
 Your secure OTP is:
@@ -94,11 +142,10 @@ Stay safe — never share your OTP.
 
 Thank you for choosing us!
 """,
-    from_email=settings.EMAIL_HOST_USER,
-    recipient_list=[email],
-    fail_silently=False,
-)
-
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[email],
+            fail_silently=False,
+        )
 
         return Response({
             "success": True,
@@ -146,7 +193,7 @@ class VerifyOTP(APIView):
 
 
 class AdminLogin(APIView):
-    permission_classes = []  #  Allow anyone
+    permission_classes = []  # Allow anyone
 
     def post(self, request):
         username = request.data.get("username")
@@ -168,15 +215,13 @@ class AdminLogin(APIView):
             "message": "Invalid admin credentials"
         }, status=status.HTTP_401_UNAUTHORIZED)
     
-    # Add this class to list all customers for the Admin Dashboard
-class AdminCustomerListView(generics.ListAPIView):
-        permission_classes = [AllowAny]   # ← IMPORTANT
 
-        queryset = UserProfile.objects.all()
-        serializer_class = UserProfileSerializer
+class AdminCustomerListView(generics.ListAPIView):
+    permission_classes = [AllowAny] 
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
 
     
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all().order_by('-id')
     serializer_class = ProductSerializer
-
