@@ -151,3 +151,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 RAZORPAY_KEY_ID = "rzp_test_S2wmzfpOPnBhVh"
 RAZORPAY_KEY_SECRET = "xKMNrj7BrGcndEl5akxxl920"
+
+ALLOWED_HOSTS = ['prakashtraders.com', 'www.prakashtraders.com']
+DEBUG = False
