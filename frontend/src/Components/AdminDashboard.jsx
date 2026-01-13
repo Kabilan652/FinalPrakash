@@ -225,6 +225,7 @@ const OrdersView = () => {
             <tr className="text-[10px] font-black uppercase tracking-widest text-slate-400">
               <th className="px-8 py-5">Order ID</th>
               <th className="px-6 py-5">Date</th>
+              <th className="px-6 py-5">Customer</th>
               <th className="px-6 py-5">Total Amount</th>
               <th className="px-6 py-5">Status</th>
               <th className="px-8 py-5 text-right">Actions</th>
@@ -250,6 +251,20 @@ const OrdersView = () => {
                       <span className="text-xs font-bold">{o.created_at ? new Date(o.created_at).toLocaleDateString() : 'N/A'}</span>
                     </div>
                   </td>
+                  <td className="px-6 py-5">
+  <div className="flex flex-col">
+    <span className="font-bold text-slate-800 text-sm">
+  {o.user?.username || o.name || "Guest"}
+    </span>
+   {o.user?.email && (
+  <span className="text-xs text-slate-500">
+    {o.user.email}
+  </span>
+)}
+
+  </div>
+</td>
+
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2">
                         <CreditCard size={14} className="text-slate-400"/>

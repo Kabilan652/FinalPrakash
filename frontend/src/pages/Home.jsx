@@ -8,11 +8,13 @@ import BrandSlider from "../Components/BrandPartnersBanner";
 const Home = () => {
   const [personalizedProducts, setPersonalizedProducts] = useState([]);
   const category = localStorage.getItem("category");
+  const API = import.meta.env.VITE_API_URL;
+
 
   useEffect(() => {
     const fetchPersonalized = async () => {
       try {
-        let url = "http://localhost:8000/api/products/random/";
+        let url = `${API}/api/products/random/`;
 
         if (category) {
           url += `?category=${encodeURIComponent(category)}`;

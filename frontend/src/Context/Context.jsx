@@ -7,6 +7,8 @@ const Context = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [token, setToken] = useState(null);
   const [role, setRole] = useState(null);
+    const API = import.meta.env.VITE_API_URL;
+
 
   // 🛒 CART & ❤️ WISHLIST
   const [cartItems, setCartItems] = useState([]);
@@ -72,7 +74,7 @@ const Context = ({ children }) => {
   const toFullImageUrl = (img) => {
     if (!img) return "https://via.placeholder.com/150";
     if (img.startsWith("http")) return img;
-    return `http://localhost:8000${img}`;
+    return `${API}${img}`;
   };
 
   // 🧠 NORMALIZE PRODUCT

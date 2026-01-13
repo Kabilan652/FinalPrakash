@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 const AllProducts = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API = import.meta.env.VITE_API_URL;
+
 
   // 1. Get Context Functions (Matches Personalized.jsx)
   const { addToCart, addToWishlist } = useContext(ContextProvider);
@@ -16,7 +18,7 @@ const AllProducts = () => {
   useEffect(() => {
     const fetchBestProducts = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/products/best/");
+        const res = await fetch(`${API}/api/products/best/`);
         if (!res.ok) throw new Error("Failed to fetch best products");
         const result = await res.json();
         setData(result);

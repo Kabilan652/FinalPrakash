@@ -12,6 +12,8 @@ const AdminLogin = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+    const API = import.meta.env.VITE_API_URL;
+
 
   // ✅ USE ONLY login()
   const { login } = useContext(ContextProvider);
@@ -24,7 +26,7 @@ const AdminLogin = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/auth/admin-login/",
+        `${API}/api/auth/admin-login/`,
         { username, password }
       );
 

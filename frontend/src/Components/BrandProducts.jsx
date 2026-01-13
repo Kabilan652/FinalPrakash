@@ -3,12 +3,15 @@ import { useEffect, useState, useContext } from "react";
 import { ContextProvider } from "../Context/Context";
 import toast from "react-hot-toast";
 
+  const API = import.meta.env.VITE_API_URL;
+
+
 // --- HELPER FUNCTIONS ---
 const toFullImageUrl = (img) => {
   if (!img) return "https://via.placeholder.com/150";
   if (img.startsWith("http")) return img;
   const cleanPath = img.startsWith("/") ? img : `/${img}`;
-  return `http://localhost:8000${cleanPath}`;
+  return `${API}${cleanPath}`;
 };
 
 const getFirstValidImage = (product) => {
@@ -211,7 +214,7 @@ const BrandProducts = () => {
     const fetchBrandProducts = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/products/?brand=${decodedBrand}`
+          `${API}/api/products/?brand=${decodedBrand}`
         );
         if (!res.ok) throw new Error("Failed to fetch");
         const result = await res.json();

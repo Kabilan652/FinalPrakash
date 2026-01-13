@@ -29,13 +29,15 @@ const CategoryProducts = () => {
   const [availability, setAvailability] = useState("");
   const [sortOrder, setSortOrder] = useState("");
 
+  const API = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     if (!decodedCategory) return;
 
     const fetchCategoryProducts = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/products/?category=${decodedCategory}`
+          `${API}/api/products/?category=${decodedCategory}`
         );
         if (!res.ok) throw new Error("Failed to fetch");
         const result = await res.json();

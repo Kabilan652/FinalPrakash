@@ -9,10 +9,13 @@ const Personalized = () => {
 
   const { addToCart, addToWishlist } = useContext(ContextProvider);
 
+    const API = import.meta.env.VITE_API_URL;
+
+
   useEffect(() => {
     const fetchRandomProducts = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/products/random/");
+        const res = await fetch(`${API}/api/products/random/`);
         if (!res.ok) throw new Error("Failed to fetch products");
 
         const result = await res.json();
@@ -33,7 +36,7 @@ const Personalized = () => {
     if (!img) return null;
     if (img.startsWith("http")) return img;
     const cleanPath = img.startsWith("/") ? img : `/${img}`;
-    return `http://localhost:8000${cleanPath}`;
+    return `${API}${cleanPath}`;
   };
 
   //  HELPER: Get the first available image

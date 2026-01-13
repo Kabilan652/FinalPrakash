@@ -11,6 +11,8 @@ const SingleItem = () => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [activeImage, setActiveImage] = useState("");
   const [loading, setLoading] = useState(true);
+    const API = import.meta.env.VITE_API_URL;
+
   
   // ✅ New State for Auto-Scroll Pausing
   const [isHovered, setIsHovered] = useState(false);
@@ -22,7 +24,7 @@ const SingleItem = () => {
     if (!img) return null;
     if (img.startsWith("http")) return img;
     const cleanPath = img.startsWith("/") ? img : `/${img}`;
-    return `http://localhost:8000${cleanPath}`;
+    return `${API}${cleanPath}`;
   };
 
   const getProductImage = (product) => {
@@ -34,7 +36,7 @@ const SingleItem = () => {
   const fetchSingleProduct = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:8000/api/products/${id}/`);
+      const res = await axios.get(`${API}/api/products/${id}/`);
       const productData = res.data;
       setProduct(productData);
 
